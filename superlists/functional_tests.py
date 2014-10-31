@@ -1,4 +1,5 @@
 from selenium import webdriver
+from selenium.webdriver.common.keys import Keys
 import unittest
 
 class NewVisitorTest(unittest.TestCase):
@@ -17,7 +18,27 @@ class NewVisitorTest(unittest.TestCase):
         # She notices the page title and header mention to-do lists
         self.assertIn('To-Do', self.browser.title)
 
+        header_text = self.browser.find_element_by_tag_name('h1').text
+        self.assertIn('To-Dp', header_text)
+
         # She is invited to enter a to-do item straight away
+        input_box = self.browser.find_element_by_id('id_new_item')
+        self.assertEqual(
+            input_box.get_attribute('placeholder'),
+            'Enter a to-do item'
+        )
+
+        # ..
+        input_box.send_keys('Buy peacock feathers')
+
+        # ..
+        input_box.send_keys(Keys.ENTER)
+
+        table = self.browser.find_element_by_id('id_list_tables')
+        rows = table.find_elements_by_tag_name('tr')
+        self.assertTrue(
+            any(row.text == '1: Buy peacock feathers' for row in rows)
+        )
         
         # ...
         
